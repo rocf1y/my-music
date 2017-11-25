@@ -1,0 +1,86 @@
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>传智音乐</title>
+	{{include './particals/links.html' }}
+</head>
+
+<body>
+	{{include './particals/header.html'}}
+	<div class="container">
+		<form id="form" method="post" action="/">
+			<div class="form-group">
+				<label for="title">歌曲标题</label>
+				<input type="text" id="title" name="title" class="form-control" placeholder="请输入歌曲标题">
+			</div>
+			<div class="form-group">
+				<label for="time">歌曲时长</label>
+				<input type="text" id="time" name="time" class="form-control" placeholder="请输入歌曲时长">
+			</div>
+			<div class="form-group">
+				<label for="singer">歌手</label>
+				<input type="text" id="singer" name="singer" class="form-control" placeholder="请输入歌手姓名">
+			</div>
+			<div class="form-group">
+				<label for="">歌曲文件</label>
+				<input type="file" name="file">
+				<p class="help-block">请上传歌曲文件.</p>
+			</div>
+			<div class="form-group">
+				<label for="">歌词文件</label>
+				<input type="file" name="filelrc">
+				<p class="help-block">请上传歌曲文件.</p>
+			</div>
+			<button type="submit" class="btn btn-success">点击添加</button>
+		</form>
+	</div>
+	{{include './particals/footer.html'}}
+	<script>
+		// 获取元素
+		var $title = $('#title').val();
+		var $time = $('#time').val();
+		var $singer = $('#singer').val();
+		var inputs = $('input');
+
+		$('#form').on('submit', function (e) {
+			// 阻止默认事件
+			e.preventDefault();
+			var formData = new FormData();
+			// 把提交的信息添加到fromData中
+			formData.append('title', inputs[0].value);
+			formData.append('time', inputs[1].value);
+			formData.append('singer', inputs[2].value);
+			formData.append('file', inputs[3].files[0]);
+			formData.append('filelrc', inputs[4].files[0]);
+			// 判断用户提交的信息是否为空
+			if ($title != '' || $time != '' || $singer != '') {
+				// 发送请求
+				$.ajax({
+					url: '/api/add-music',
+					type: 'post',
+					data: formData,
+					dataType: 'json',
+					contentType: false, // 默认加上键值对的头 因为有文件上传，所以不加
+					processData: false, // 转换你的数据 false不转换
+					success: function (res) {
+						// 根据服务器返回来的数据判断是否添加音乐成功
+						if (res.code == '001') {
+							if (confirm('添加成功，去听听新添加的音乐吧')) {
+								location.href = '/music/list-music'
+							}
+						} else {
+							alert(res.msg);
+						}
+					}
+				})
+			} else {
+				alert('请填写完整');
+			}
+		})
+	</script>
+
+
+</body>
+
+</html>

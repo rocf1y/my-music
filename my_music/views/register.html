@@ -1,0 +1,153 @@
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>传智音乐</title>
+	{{include './particals/links.html' }}
+
+	<style type="text/css">
+		#pwd-level div {
+			height: 10px;
+			width: 30px;
+			display: inline-block;
+			float: left;
+			border-radius: 5px;
+			margin-top: 6px;
+		}
+
+		#pwd-level span {
+			display: inline-block;
+			float: left;
+		}
+	</style>
+</head>
+
+<body>
+	{{include './particals/header.html'}}
+	<link href="/public/css/register.css" rel="stylesheet" type="text/css" />
+	<div class="aw-register-box">
+		<div class="mod-head">
+			<a href="/"></a>
+			<h1>注册新用户</h1>
+			<h2 style="color:red;" id="msg"></h2>
+		</div>
+		<div class="mod-body">
+			<form action="" class="aw-register-form" method="post" id="register_form">
+				<ul>
+					<li class="alert alert-danger hide error_message text-left">
+						<i class="icon icon-delete"></i>
+						<em></em>
+					</li>
+					<li>
+						<input class="aw-register-name form-control" type="text" id="username" name="username" placeholder="用户名" value="" />
+					</li>
+					<li>
+						<input class="aw-register-email form-control" type="text" placeholder="邮箱" name="email" value="" />
+					</li>
+					<li>
+						<input class="aw-register-pwd form-control" type="password" name="password" placeholder="密码" id="pwd" />
+					</li>
+					<div id='pwd-level'>
+						<span>密码强度:</span>
+						<div></div>
+						<div></div>
+						<div></div>
+					</div>
+					<hr/>
+					<li class="aw-register-verify">
+						<img class="pull-right" width="120" src="">
+						<input type="text" class="form-control" name="v_code" placeholder="验证码" />
+					</li>
+					<li class="last">
+						<label>
+							<input type="checkbox" checked="checked" value="agree" /> 我同意</label>
+						<a href="javascript:;" class="aw-agreement-btn">用户协议</a>
+						<a href="/login" class="pull-right">已有账号?</a>
+						<div class="aw-regiter-agreement hide">
+							<div class="aw-register-agreement-txt" id="register_agreement"></div>
+						</div>
+					</li>
+					<li class="clearfix">
+						<button type="submit" class="btn btn-large btn-blue btn-block">
+							注册
+						</button>
+					</li>
+				</ul>
+			</form>
+		</div>
+	</div>
+	{{include './particals/footer.html'}}
+
+	<script>
+		// 防止用户频繁操作造成的过多请求
+		function delay() {
+			// 记录一个初始时间
+			var last = Date.now();
+			var timer;
+
+			function send() {
+				if ($('#username').val() == '') return;
+				$.ajax({
+					url: '/api/check-user',
+					type: 'post',
+					data: 'username=' + $('#username').val(),
+					dataType: 'json',
+					success: function (res) {
+						if (res.code == '001') {
+							$('#msg').text(res.msg)
+						} else {
+							$('#msg').text(res.msg);
+						}
+					}
+				})
+			}
+
+			return function () {
+				// 如果当前的事件差与之前的事件差大于两秒就操作
+				var current = Date.now();
+				// 先把上一个定时器
+				clearTimeout(timer);
+				if ((current - last) > 1000) {
+					timer = setTimeout(send, 1000);
+					last = current;
+				} else {
+					timer = setTimeout(send, 1000);
+				}
+			}
+		}
+
+		// 添加input事件
+		$('#username').on('input', delay());
+
+		// 密码强度
+		$('#pwd').on('keyup', function () {
+			var pwd = $(this).val();
+			// 判断时候是否全数字
+			// 判断是否全数字
+			var regex1 = /[0-9]/;
+			// 判断有英文字母
+			var regex2 = /[a-zA-Z]/;
+			// 判断特殊符号
+			var regex3 = /[\W]/;
+
+			var level = 0;
+			if (regex1.test(pwd)) level++;
+			if (regex2.test(pwd)) level++;
+			if (regex3.test(pwd)) level++;
+
+			var divs = $('#pwd-level').find('div');
+			// 清空颜色
+			for (var i = 0; i < divs.length; i++) {
+				divs[i].style.backgroundColor = '';
+			}
+
+			var colors = ['yellow', 'orange', 'red'];
+			
+			for (var i = 0; i < level; i++) {
+				divs[i].style.backgroundColor = colors[i];
+			}
+		})
+	</script>
+</body>
+
+</html>
