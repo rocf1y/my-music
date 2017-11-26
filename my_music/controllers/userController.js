@@ -1,6 +1,8 @@
 'use strict';
 // 引入数据库操作db对象
 const db = require('../models/db');
+// 引入生成验证码的对象
+const captchapng = require('captchapng2');
 // 空对象用于导出数据
 let userController = {};
 
@@ -160,6 +162,18 @@ userController.showLogin = (req, res, next) => {
  */
 userController.showRegister = (req, res, next) => {
   res.render('register.html');
+}
+
+
+userController.getCaptcha = (req, res, next) => {
+  //生成答案
+  let rand = parseInt(Math.random() * 9000 + 1000);
+  //生成图片对象
+  let png = new captchapng(80, 30, rand); // width,height, numeric captcha 
+  //将答案存储在session中，供注册的时候取出做对比
+  req.session.v_code = rand+'';
+  //给img标签响应图片数据
+  res.send(png.getBuffer());
 }
 // 向外导出
 module.exports = userController;

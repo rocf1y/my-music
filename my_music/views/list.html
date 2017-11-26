@@ -68,7 +68,7 @@
 							<td>{{$value.singer}}</td>
 							<td>{{$value.time}}</td>
 							<td>
-								<a href="">编辑</a>
+								<a href="/music/edit-music?id={{$value.id}}">编辑</a>
 							</td>
 							<td>
 								<a class="del" data-id="{{$value.id}}" href="">删除</a>
@@ -171,21 +171,24 @@
 		$('#list_container').on('click', '.del', function (e) {
 			e.preventDefault();
 			var id = $(this).data('id');
-			$.ajax({
-				url: '/api/del-music',
-				type: 'delete',
-				data: {
-					id: id
-				},
-				dataType: 'json',
-				success: function (res) {
-					if (res.code == '001') {
-						if (confirm('删除成功')) {
-							location.href = '/music/list-music'
+			var $this = $(this)
+			if (confirm('确定要删除此歌曲吗')) {
+				$.ajax({
+					url: '/api/del-music',
+					type: 'delete',
+					data: {
+						id: id
+					},
+					dataType: 'json',
+					success: function (res) {
+						if (res.code == '001') {
+							$this.parents('tbody')[0].removeChild($this[0].parentNode.parentNode);
+						} else {
+							alert('此歌曲不存在');
 						}
 					}
-				}
-			})
+				})
+			}
 		})
 	</script>
 </body>

@@ -54,7 +54,6 @@
 			formData.append('file', inputs[3].files[0]);
 			formData.append('filelrc', inputs[4].files[0]);
 			// 判断用户提交的信息是否为空
-			if ($title != '' || $time != '' || $singer != '') {
 				// 发送请求
 				$.ajax({
 					url: '/api/add-music',
@@ -74,9 +73,6 @@
 						}
 					}
 				})
-			} else {
-				alert('请填写完整');
-			}
 		})
 	</script>
 

@@ -150,8 +150,37 @@ exports.showListMusic = (req, res, next) => {
   // 以用户id为查询条件从数据库中查询对应的数据
   db.query('select * from musics where uid = ?', [userId], (err, data) => {
     if (err) return next(err);
-    res.render('list.html',{
+    res.render('list.html', {
       data,
     })
   })
+}
+
+/**
+ * [编辑音乐]
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ */
+exports.showEditMusic = (req, res, next) => {
+  // 获取用户提交的id
+  let id = req.query.id;
+  // 根据id从数据库中查询对应的数据
+  db.query('select * from musics where id = ?', [id], (err, result) => {
+    if (err) return next(err);
+    // 判断有没有数据
+    if (result.length == 0) {
+      res.json({
+        code: '002',
+        msg: '你选择的音乐不存在'
+      })
+      return;
+    } else {
+      // 返回数据
+      res.render('edit.html',{
+        music:result[0]
+      })
+    }
+  })
+
 }

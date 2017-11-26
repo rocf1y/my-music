@@ -14,9 +14,9 @@ const bodyParser = require('body-parser');
 // 引入session
 const session = require('express-session');
 // 引入路由
-const api_router = require('./web_router');
-const user_router = require('./user_router');
-const music_router = require('./music_router');
+const api_router = require('./router/web_router');
+const user_router = require('./router/user_router');
+const music_router = require('./router/music_router');
 // 配置模板引擎
 app.engine('html', require('express-art-template'));
 // 处理静态资源
@@ -68,7 +68,7 @@ app.use((err, req, res, next) => {
 	res.send(`
         <div style="background-color:yellowgreen;">
             您要访问的页面，暂时去医院了..请稍后再试..
-            <a href="/">去首页</a>
+            <a href="/music/list-music">去首页</a>
         </div>
     `)
 });
